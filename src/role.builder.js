@@ -6,6 +6,13 @@ var roleBuilder = {
         
         if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0){
             creep.memory.building=false;
+            var targetContainer = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                                            filter: (structure) => {return structure.structureType == STRUCTURE_CONTAINER}
+            });
+            var targetStorage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                                            filter: (structure) => {return structure.structureType == STRUCTURE_STORAGE}
+            });
+
             creep.say('pick up');
             
         }
@@ -29,12 +36,6 @@ var roleBuilder = {
             else{
                 
     	        // Go pick up energy from container
-                var targetContainer = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                                                filter: (structure) => {return structure.structureType == STRUCTURE_CONTAINER}
-                });
-                var targetStorage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                                                filter: (structure) => {return structure.structureType == STRUCTURE_STORAGE}
-                });
                 if(targetStorage){
                     if(creep.withdraw(targetStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targetStorage, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -50,7 +51,7 @@ var roleBuilder = {
                     var dropped = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
                     if(dropped) {
                         if(creep.pickup(dropped) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(dropped);
+                            creep.moveTo(dropped, {visualizePathStyle: {stroke: '#ffffff'}});
                         }
                     }
                 }

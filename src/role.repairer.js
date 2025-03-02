@@ -5,6 +5,10 @@ var roleRepairer = {
         
         if(creep.memory.repairing && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.repairing = false;
+            // Go pick up energy from container
+            var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                                            filter: (structure) => {return (structure.structureType == STRUCTURE_CONTAINER)}
+            });
             creep.say('pick up');
 	    }
 	    if(!creep.memory.repairing && creep.store.getFreeCapacity() == 0) {
@@ -32,10 +36,6 @@ var roleRepairer = {
             }
 	    }
 	    else{
-	        // Go pick up energy from container
-            var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                                            filter: (structure) => {return (structure.structureType == STRUCTURE_CONTAINER)}
-            });
             if(creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
             }
