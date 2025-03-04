@@ -1,7 +1,7 @@
 var roleBuilder = {
 
     /** @param {Creep} creep **/
-    run: function(creep,roomStr=null) {
+    run: function(creep,id=null,roomStr=null) {
         
         
         if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0){
@@ -12,12 +12,22 @@ var roleBuilder = {
             var targetStorage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                                             filter: (structure) => {return structure.structureType == STRUCTURE_STORAGE}
             });
+            if(targetContainer!=null){
+                creep.memory.targetContainerId=targetContainer.id
+            }
+            if(targetStorage!=null){
+                creep.memory.targetStorageId=targetStorage.id
+            }
 
             creep.say('pick up');
             
         }
         if (!creep.memory.building && creep.store.getFreeCapacity() == 0){
             creep.memory.building=true;
+            if(id==null){
+                var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+                creep.memory.targetId=target.id
+            }
             creep.say('🚧 build');
 	    }
 	    
@@ -26,7 +36,14 @@ var roleBuilder = {
         }
         else{
             if(creep.memory.building){
-                var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+                if(id!=null){
+                    // this builder has a specified construction site
+                    var target = Game.getObjectById(id)
+                }
+                else{
+                    // pick the closest construction site
+                    var target = Game.getObjectById(creep.memory.targetId)
+                }
                 if(target){
                     if(creep.build(target) == ERR_NOT_IN_RANGE) {
                                 creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -34,8 +51,9 @@ var roleBuilder = {
                 }
             }
             else{
-                
     	        // Go pick up energy from container
+                var targetStorage=Game.getObjectById(creep.memory.targetStorageId)
+                var targetContainer=Game.getObjectById(creep.memory.targetContainerId)
                 if(targetStorage){
                     if(creep.withdraw(targetStorage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targetStorage, {visualizePathStyle: {stroke: '#ffffff'}});

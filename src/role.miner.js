@@ -25,7 +25,7 @@ var roleMiner = {
 	    }
 	    
         if(creep.memory.transferring){
-            target=Game.getObjectById(creep.memory.targetId)
+            var target=Game.getObjectById(creep.memory.targetId)
 
             if(target==null){
                 // if there's no container in this room, just drop the energy
